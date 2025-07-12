@@ -18,7 +18,7 @@ const authControllers = {
             }   
 
             // Here you would typically generate a token and send it back 
-            res.status(200).json({ message: 'Login successful', userId: user.id });
+            res.status(200).json({ message: 'Login successful', userId: user.id, username: user.username, role: user.role });
         } catch (error) {
             console.error('Login error:', error);
             res.status(500).json({ message: 'Internal server error' });
