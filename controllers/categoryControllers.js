@@ -41,7 +41,7 @@ const categoryControllers = {
       const newCategoryId = await categoryModel.create({ name, description });
       res.status(201).json({ 
         message: 'Category created successfully', 
-        categoryId: newCategoryId 
+        category_id: newCategoryId 
       });
     } catch (error) {
       console.error('Error in createCategory controller:', error);

@@ -40,12 +40,12 @@ const productController = {
     createProduct: async (req, res) => {
         const productData = req.body;
         try {
-            const {name, description, price, categoryId, imageUrl} = req.body;
-            if (!name || !price || !categoryId) {
+            const {name, description, price, category_id, image_url} = req.body;
+            if (!name || !price || !category_id) {
                 return res.status(400).json({ error: 'Name, price, and category ID are required' });
             }
 
-            const newProductId = await productModel.create({ name, description, price, categoryId, imageUrl });
+            const newProductId = await productModel.create({ name, description, price, category_id, image_url });
             res.status(201).json({ message: 'Product created successfully', productId: newProductId });
         } catch (error) {
             console.error('Loi trong controller createProduct:', error);
@@ -56,7 +56,7 @@ const productController = {
     updateProduct: async (req, res) => {
        try { 
         const { id } = req.params;
-        const { name, description, price, categoryId, imageUrl } = req.body;
+        const { name, description, price, categoryId, image_url } = req.body;
         
         if (!name || !price || !categoryId) {
             return res.status(400).json({ error: 'Name, price, and category ID are required' });
@@ -67,7 +67,7 @@ const productController = {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        const success = await productModel.update(id, { name, description, price, categoryId, imageUrl });
+        const success = await productModel.update(id, { name, description, price, categoryId, image_url });
         if (success) {
             res.status(200).json({ message: 'Product updated successfully' });
         } else {
