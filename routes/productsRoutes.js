@@ -6,11 +6,11 @@ const router = express.Router();
 // Lấy tất cả món ăn
 router.get('/', productControllers.getAllProducts);
 
-// Lấy món ăn theo ID
-router.get('/:id', productControllers.getProductById);
-
 // Lấy món ăn theo danh mục
 router.get('/category/:categoryId', productControllers.getProductsByCategory);
+
+// Lấy món ăn theo ID
+router.get('/:id', productControllers.getProductById);
 
 // Tạo món ăn mới
 router.post('/', productControllers.createProduct);

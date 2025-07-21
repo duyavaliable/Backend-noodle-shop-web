@@ -22,9 +22,9 @@ const productModel = {
         }
     },
 //lay mon an theo danh muc
-    getBycategory_id: async (category_id) => {
+    getByCategoryId: async (categoryId) => {
         try {
-            const [rows] = await db.pool.query('SELECT * FROM products WHERE category_id = ? ORDER BY name', [category_id]);
+            const [rows] = await db.pool.query('SELECT * FROM products WHERE category_id = ? ORDER BY name', [categoryId]);
             return rows;
         } catch (error) {
             console.error('Loi lay mon an theo danh muc:', error);

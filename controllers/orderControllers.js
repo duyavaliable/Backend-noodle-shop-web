@@ -1,3 +1,4 @@
+const db = require('../config/db');
 const orderModel = require('../models/Orders');
 const { getAll, update } = require('../models/Orders');
 
@@ -29,30 +30,59 @@ const orderControllers = {
     },
 
     createOrder: async (req, res) => {
-        try {
-            const { total_amount, status = 'Đang xử lý', customer_name, customer_phone, shipping_address } = req.body;
-            
-            //Kiem tra dữ liệu đầu vào
-            if (!total_amount || !customer_name || !customer_phone || !shipping_address) {
-                return res.status(400).json({ error: 'Thiếu thông tin cần thiết để tạo đơn hàng' });
-            }
+    try {
+        const { total_amount, status = 'Đang xử lý', customer_name, customer_phone, shipping_address, order_items } = req.body;
+        const user_id = req.user ? req.user.id : null;
 
-            const newOrder = await orderModel.create ({
+        // Kiểm tra dữ liệu đầu vào - chỉ kiểm tra một lần
+        if (!total_amount || !customer_name || !customer_phone || !shipping_address || !order_items || !order_items.length) {
+            return res.status(400).json({ error: 'Thiếu thông tin cần thiết để tạo đơn hàng' });
+        }
+        
+        // Bắt đầu transaction để đảm bảo tính toàn vẹn dữ liệu
+        const connection = await db.pool.getConnection();
+        await connection.beginTransaction();
+
+        try {
+            // Tạo đơn hàng
+            const newOrderId = await orderModel.createWithTransaction(connection, {
                 total_amount,
                 status,
                 customer_name,
                 customer_phone,
-                shipping_address
+                shipping_address,
+                user_id
             });
 
-            res.status(201).json({ message: "Tạo đơn hàng thành công", order: newOrder });
+            // Lưu chi tiết đơn hàng
+            await Promise.all(order_items.map(item => 
+                orderModel.createOrderItemWithTransaction(connection, {
+                    order_id: newOrderId,
+                    product_id: item.product_id,
+                    quantity: item.quantity,
+                    price: item.price
+                })
+            ));
 
+            // Commit transaction nếu mọi thứ OK
+            await connection.commit();
+            connection.release();
+
+            res.status(201).json({ 
+                message: "Tạo đơn hàng thành công", 
+                order: { id: newOrderId } 
+            });
         } catch (error) {
-            console.error('Lỗi trong controller createOrder:', error);
-            res.status(500).json({ error: 'Lỗi tạo đơn hàng' });
+            // Rollback nếu có lỗi
+            await connection.rollback();
+            connection.release();
+            throw error;
         }
-    },
-
+    } catch (error) {
+        console.error('Lỗi trong controller createOrder:', error);
+        res.status(500).json({ error: 'Lỗi tạo đơn hàng' });
+    }
+},
     updateOrder: async (req, res) => {
         try {
             const { id } = req.params;

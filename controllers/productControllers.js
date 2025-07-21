@@ -40,12 +40,12 @@ const productController = {
     createProduct: async (req, res) => {
         const productData = req.body;
         try {
-            const {name, description, price, category_id, image_url} = req.body;
-            if (!name || !price || !category_id) {
+            const {name, description, price, categoryId, image_url} = req.body;
+            if (!name || !price || !categoryId) {
                 return res.status(400).json({ error: 'Name, price, and category ID are required' });
             }
 
-            const newProductId = await productModel.create({ name, description, price, category_id, image_url });
+            const newProductId = await productModel.create({ name, description, price, categoryId, image_url });
             res.status(201).json({ message: 'Product created successfully', productId: newProductId });
         } catch (error) {
             console.error('Loi trong controller createProduct:', error);
