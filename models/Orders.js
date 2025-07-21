@@ -1,5 +1,6 @@
 const db = require('../config/db');
 
+
 const orderModel = {
   // Lấy tất cả đơn hàng
   getAll: async () => {
@@ -128,6 +129,16 @@ const orderModel = {
       return result.affectedRows > 0;
     } catch (error) {
       console.error('Lỗi cập nhật trạng thái đơn hàng:', error);
+      throw error;
+    }
+  },
+
+  deleteOrderItems: async (orderId) => {
+    try {
+      const [result] = await db.pool.query('DELETE FROM order_items WHERE order_id = ?', [orderId]);
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('Lỗi xóa chi tiết đơn hàng:', error);
       throw error;
     }
   },

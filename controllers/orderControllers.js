@@ -1,6 +1,5 @@
 const db = require('../config/db');
 const orderModel = require('../models/Orders');
-const { getAll, update } = require('../models/Orders');
 
 const orderControllers = {
     getAllOrders: async (req, res) => {
@@ -15,8 +14,8 @@ const orderControllers = {
 
     getOrderById: async (req, res) => {
         try {
-            const { id } = req.params;
-            const order = await orderModel.getById(id);
+            const { id  } = req.params;
+            const order = await orderModel.getOrderDetailsById(id);
 
             if (order) {
                 return res.status(200).json(order);
@@ -29,10 +28,26 @@ const orderControllers = {
         }
     },
 
+    getOrderByUserId: async (req, res) => {
+        try {
+            const { userId } = req.params; //??? su khac nhau giua req.params va req.user.id
+            const orders = await orderModel.getByUserId(userId);
+
+            if (orders && orders.length > 0) {
+                return res.status(200).json(orders);
+            } else {
+                return res.status(404).json({ error: 'Không tìm thấy đơn hàng cho người dùng này' });
+            }
+        } catch (error) {
+            console.error('Lỗi trong controller getOrderByUserId:', error);
+            res.status(500).json({ error: 'Lỗi lấy đơn hàng theo người dùng' });
+        }
+    },
+
     createOrder: async (req, res) => {
     try {
         const { total_amount, status = 'Đang xử lý', customer_name, customer_phone, shipping_address, order_items } = req.body;
-        const user_id = req.user ? req.user.id : null;
+  
 
         // Kiểm tra dữ liệu đầu vào - chỉ kiểm tra một lần
         if (!total_amount || !customer_name || !customer_phone || !shipping_address || !order_items || !order_items.length) {
@@ -44,6 +59,8 @@ const orderControllers = {
         await connection.beginTransaction();
 
         try {
+            // const user_id = req.user.id || null; // Lấy user_id từ token đã xác thực
+            const user_id =  req.body.user_id || null; //tam thoi vi chua co jwt 
             // Tạo đơn hàng
             const newOrderId = await orderModel.createWithTransaction(connection, {
                 total_amount,
@@ -155,7 +172,8 @@ const orderControllers = {
             if (!existingOrder) {
                 return res.status(404).json({ error: 'Không tìm thấy đơn hàng' });
             }
-
+            
+            await orderModel.deleteOrderItems(id);
             const deleted = await orderModel.delete(id);
 
             if (deleted) {
