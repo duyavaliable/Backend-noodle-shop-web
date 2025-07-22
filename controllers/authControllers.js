@@ -57,38 +57,6 @@ const authControllers = {
         }
     },
 
-    //Dang ky nhan vien 
-    SignUpUser: async (req, res) => {
-        try {
-            const { username, password, email } = req.body;
-
-            //xac thuc dau vao
-            if (!username || !password || !email) {
-                return res.status(400).json({ message: 'Username, password, and email are required' });
-            }
-
-            //kiem tra xem username da ton tai chua
-            const existingUser = await userModel.findByUsername(username);
-            if (existingUser) {
-                return res.status(409).json({ message: 'Username already exists' });
-            }
-
-            //kiem tra xem email da ton tai chua
-            const existingEmail = await userModel.findByEmail(email);
-            if (existingEmail) {
-                return res.status(409).json({ message: 'Email already exists' });
-            }
-            
-
-            //tao user moi
-            const newUserId = await userModel.create({ username, password, email });
-            res.status(201).json({ message: 'User created successfully', userId: newUserId });
-        } catch (error) {
-            console.error('Registration error:', error);
-            res.status(500).json({ message: 'Internal server error' });
-        }
-    },
-
     //Dang ky nhan vien
     SignUpStaff: async (req, res) => {
         try {

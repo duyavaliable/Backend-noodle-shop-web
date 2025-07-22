@@ -6,6 +6,7 @@ const authRoutes = require('./routes/authRoutes'); // Import the authentication 
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productsRoutes');
 const orderRoutes = require('./routes/orderRoutes'); 
+const cartRoutes = require('./routes/cartRoutes'); 
 
 const app = express();
 const PORT = process.env.PORT || 5000; // dung de nhan cac http request tu  frontend
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes); 
+app.use('/api/cart', cartRoutes);
 
 // Start server
 app.listen(PORT, () => {
