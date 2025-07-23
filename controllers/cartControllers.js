@@ -9,10 +9,16 @@ const cartController = {
                 return res.status(400).json({ message: 'ID người dùng không hợp lệ' });
             }
             const cart = await cartModel.findOrCreateByUserId(userId);
+            
+            if (!cart) {
+                return res.status(404).json({ message: 'Không thể tạo hoặc tìm thấy giỏ hàng cho người dùng' });
+            }
+            
             const items = await cartModel.getCartContents(cart.id);
             
             res.status(200).json({ cart, items });
         } catch (error) {
+            console.error('Lỗi khi lấy giỏ hàng:', error);
             res.status(500).json({ message: 'Lỗi khi lấy giỏ hàng của người dùng' });
         }
     },
@@ -32,6 +38,7 @@ const cartController = {
 
             res.status(200).json({ message: 'Thêm sản phẩm vào giỏ hàng thành công' });
         } catch (error) {
+            console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
             res.status(500).json({ message: 'Lỗi khi thêm sản phẩm vào giỏ hàng' });
         }
     },
@@ -54,6 +61,7 @@ const cartController = {
                 res.status(404).json({ message: 'Không tìm thấy sản phẩm trong giỏ hàng' });
             }
         } catch (error) {
+            console.error('Lỗi khi cập nhật sản phẩm trong giỏ hàng:', error);
             res.status(500).json({ message: 'Lỗi khi cập nhật sản phẩm trong giỏ hàng' });
         }
     },
@@ -70,6 +78,7 @@ const cartController = {
                 res.status(404).json({ message: 'Không tìm thấy sản phẩm trong giỏ hàng' });
             }
         } catch (error) {
+            console.error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:', error);
             res.status(500).json({ message: 'Lỗi khi xóa sản phẩm khỏi giỏ hàng' });
         }
     },
@@ -82,6 +91,7 @@ const cartController = {
             await cartModel.clearCart(cart.id);
             res.status(200).json({ message: 'Xóa sạch giỏ hàng thành công' });
         } catch (error) {
+            console.error('Lỗi khi xóa sạch giỏ hàng:', error);
             res.status(500).json({ message: 'Lỗi khi xóa sạch giỏ hàng' });
         }
     }

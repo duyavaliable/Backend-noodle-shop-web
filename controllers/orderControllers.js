@@ -46,8 +46,7 @@ const orderControllers = {
 
     createOrder: async (req, res) => {
     try {
-        const { total_amount, status = 'Đang xử lý', customer_name, customer_phone, shipping_address, order_items } = req.body;
-  
+        const { total_amount, status = 'Đang xử lý', customer_name, customer_phone, shipping_address, user_id, order_items } = req.body;
 
         // Kiểm tra dữ liệu đầu vào - chỉ kiểm tra một lần
         if (!total_amount || !customer_name || !customer_phone || !shipping_address || !order_items || !order_items.length) {
@@ -59,8 +58,6 @@ const orderControllers = {
         await connection.beginTransaction();
 
         try {
-            // const user_id = req.user.id || null; // Lấy user_id từ token đã xác thực
-            const user_id =  req.body.user_id || null; //tam thoi vi chua co jwt 
             // Tạo đơn hàng
             const newOrderId = await orderModel.createWithTransaction(connection, {
                 total_amount,
