@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', productControllers.getAllProducts);
 
 // Lấy món ăn theo danh mục
-router.get('/category/:categoryId', productControllers.getProductsByCategory);
+router.get('/category/:category_id', productControllers.getProductsByCategory);
 
 // Lấy món ăn theo ID
 router.get('/:id', productControllers.getProductById);

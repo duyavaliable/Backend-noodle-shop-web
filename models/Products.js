@@ -22,9 +22,9 @@ const productModel = {
         }
     },
 //lay mon an theo danh muc
-    getByCategoryId: async (categoryId) => {
+    getByCategoryId: async (category_id) => {
         try {
-            const [rows] = await db.pool.query('SELECT * FROM products WHERE category_id = ? ORDER BY name', [categoryId]);
+            const [rows] = await db.pool.query('SELECT * FROM products WHERE category_id = ? ORDER BY name', [category_id]);
             return rows;
         } catch (error) {
             console.error('Loi lay mon an theo danh muc:', error);
@@ -35,10 +35,10 @@ const productModel = {
     //Tao mon an moi
     create: async (productData) => {
         try {
-            const { name, description, price, categoryId, image_url } = productData;
+            const { name, description, price, category_id, image_url } = productData;
             const [result] = await db.pool.query(
                 'INSERT INTO products (name, description, price, category_id, image_url) VALUES (?, ?, ?, ?, ?)',
-                [name, description, price, categoryId, image_url]
+                [name, description, price, category_id, image_url]
             );
             return result.insertId;
         } catch (error) {
@@ -50,10 +50,10 @@ const productModel = {
     //Cap nhat mon an
     update: async (id, productData) => {
         try {
-            const { name, description, price, categoryId, image_url } = productData;
+            const { name, description, price, category_id, image_url } = productData;
             const [result] = await db.pool.query(
                 'UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, image_url = ? WHERE id = ?',
-                [name, description, price, categoryId, image_url, id]
+                [name, description, price, category_id, image_url, id]
             );
             return result.affectedRows > 0;
         } catch (error) {
