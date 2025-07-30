@@ -117,6 +117,28 @@ const authControllers = {
             console.error('Registration error:', error);
             res.status(500).json({ message: 'Internal server error' });
         }
+    },
+
+    updateUser: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const {username, email, phone_number} = req.body;
+
+            if (!username || !email) {
+                return res.status(400).json({ error: 'Username and email are required' });
+            }
+    
+            // Update user in the database
+            const updated = await userModel.update(id, { username, email, phone_number });
+            if (updated) {
+                res.status(200).json({ message: 'User updated successfully' });
+            } else {
+                res.status(404).json({ error: 'User not found or no changes made' });
+            }
+        } catch (error) {
+            console.error('Error in updateUser controller:', error);
+            res.status(500).json({ error: 'Error updating user' });
+        }
     }
 };
 

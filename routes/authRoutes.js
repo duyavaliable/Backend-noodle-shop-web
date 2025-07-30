@@ -12,5 +12,7 @@ router.post('/SignUp/user', authControllers.SignUpUser);
 router.post('/SignUp/admin', authControllers.SignUpAdmin);
 // Đăng ký nhân viên
 router.post('/SignUp/staff', authControllers.SignUpStaff);
+//chinh sua thong tin user
+router.put('/update/:id', authControllers.updateUser);
 
 module.exports = router;

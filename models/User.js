@@ -44,7 +44,19 @@ const userModel = {
             console.error('Error creating user:', error);
             throw error;
         }
-    }
+    },
+
+    //cap nhat user
+    update: async (id, userData) => {
+        try {
+            const { username, email, phone_number } = userData;
+            const [result] = await db.pool.query('UPDATE users SET username = ?, email = ?, phone_number = ? WHERE id = ?', [username, email, phone_number, id]);
+            return result.affectedRows > 0; 
+        } catch (error) {
+            console.error('Error updating user:', error);
+            throw error;
+        }
+    },
 
 }
 
