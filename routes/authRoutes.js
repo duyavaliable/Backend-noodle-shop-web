@@ -14,5 +14,7 @@ router.post('/SignUp/admin', authControllers.SignUpAdmin);
 router.post('/SignUp/staff', authControllers.SignUpStaff);
 //chinh sua thong tin user
 router.put('/update/:id', authControllers.updateUser);
+//lay thong tin user
+router.get('/user/:id', authControllers.getUserInfo);
 
 module.exports = router;

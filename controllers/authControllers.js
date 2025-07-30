@@ -18,7 +18,7 @@ const authControllers = {
             }   
 
             // Here you would typically generate a token and send it back 
-            res.status(200).json({ message: 'Login successful', userId: user.id, username: user.username, role: user.role });
+            res.status(200).json({ message: 'Login successful', userId: user.id, username: user.username, role: user.role, email: user.email });
         } catch (error) {
             console.error('Login error:', error);
             res.status(500).json({ message: 'Internal server error' });
@@ -138,6 +138,22 @@ const authControllers = {
         } catch (error) {
             console.error('Error in updateUser controller:', error);
             res.status(500).json({ error: 'Error updating user' });
+        }
+    },
+    //lay thong tin user
+    getUserInfo: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            // Find user by ID
+            const user = await userModel.findById(id);
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.status(200).json(user);
+        } catch (error) {
+            console.error('Error in getUserInfo controller:', error);
+            res.status(500).json({ error: 'Error getting user information' });
         }
     }
 };
