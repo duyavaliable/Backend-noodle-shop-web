@@ -4,14 +4,37 @@ const cartModel = {
     // Tìm hoặc tạo giỏ hàng cho người dùng. Mỗi người dùng chỉ có một giỏ hàng.
     findOrCreateByUserId: async (userId) => {
         try {
-            let [rows] = await db.pool.query('SELECT * FROM carts WHERE user_id = ?', [userId]);
+            //kiem tra xem gio hang da ton tai chua
+            const [rows] = await db.pool.query('SELECT * FROM carts WHERE user_id = ?', [userId]);
+    
             if (rows.length > 0) {
-                return rows[0]; // Trả về giỏ hàng đã có
-            } else {
-                // Tạo giỏ hàng mới nếu chưa tồn tại
-                const [result] = await db.pool.query('INSERT INTO carts (user_id) VALUES (?)', [userId]);
-                const [newCart] = await db.pool.query('SELECT * FROM carts WHERE id = ?', [result.insertId]);
+                        return rows[0]; // Trả về giỏ hàng đã tồn tại
+                    }
+        
+            // Nếu không tìm thấy, thêm một transaction để tránh race condition
+            const connection = await db.pool.getConnection();
+            try {
+                await connection.beginTransaction();
+                
+                // Kiểm tra lại một lần nữa để đảm bảo không có race condition
+                const [checkRows] = await connection.query('SELECT * FROM carts WHERE user_id = ?', [userId]);
+                if (checkRows.length > 0) {
+                    await connection.commit();
+                    connection.release();
+                    return checkRows[0];
+                }
+                
+                // Tạo giỏ hàng mới
+                const [result] = await connection.query('INSERT INTO carts (user_id) VALUES (?)', [userId]);
+                const [newCart] = await connection.query('SELECT * FROM carts WHERE id = ?', [result.insertId]);
+                
+                await connection.commit();
+                connection.release();
                 return newCart[0];
+            } catch (error) {
+                await connection.rollback();
+                connection.release();
+                throw error;
             }
         } catch (error) {
             console.error('Lỗi khi tìm hoặc tạo giỏ hàng:', error);

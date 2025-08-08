@@ -28,7 +28,7 @@ const authControllers = {
     //Dang ky user moi
     SignUpUser: async (req, res) => {
         try {
-            const { username, password, email } = req.body;
+            const { username, password, email } = req.body; 
 
             //xac thuc dau vao
             if (!username || !password || !email) {
