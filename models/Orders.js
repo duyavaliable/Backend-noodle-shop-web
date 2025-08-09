@@ -5,7 +5,12 @@ const orderModel = {
   // Lấy tất cả đơn hàng
   getAll: async () => {
     try {
-      const [rows] = await db.pool.query('SELECT * FROM orders ORDER BY order_date DESC');
+      const [rows] = await db.pool.query(`
+        SELECT o.*, u.username as user_username 
+        FROM orders o
+        LEFT JOIN users u ON o.user_id = u.id
+        ORDER BY o.order_date DESC
+      `);
       return rows;
     } catch (error) {
       console.error('Lỗi lấy danh sách đơn hàng:', error);
@@ -16,7 +21,12 @@ const orderModel = {
   // Lấy đơn hàng theo ID
   getById: async (id) => {
     try {
-      const [rows] = await db.pool.query('SELECT * FROM orders WHERE id = ?', [id]);
+      const [rows] = await db.pool.query(`
+        SELECT o.*, u.username as user_username 
+        FROM orders o
+        LEFT JOIN users u ON o.user_id = u.id
+        WHERE o.id = ?
+      `, [id]);
       return rows[0];
     } catch (error) {
       console.error('Lỗi lấy đơn hàng theo ID:', error);
