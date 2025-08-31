@@ -99,6 +99,29 @@ const productController = {
         console.error('Lỗi trong controller deleteProduct:', error);
         res.status(500).json({ message: 'Lỗi xóa món ăn' });
         }
+    },
+
+    searchProducts: async (req, res) => {
+        try {
+            const { keyword, category_id, min_price, max_price, sort } = req.query;
+            
+            if (!keyword && !category_id && !min_price && !max_price) {
+                return res.status(400).json({ error: 'Vui lòng cung cấp ít nhất một tiêu chí tìm kiếm' });
+            }
+            
+            const products = await productModel.search({
+                keyword, 
+                category_id, 
+                min_price, 
+                max_price,
+                sort
+            });
+            
+            res.status(200).json(products);
+        } catch (error) {
+            console.error('Lỗi trong controller searchProducts:', error);
+            res.status(500).json({ error: 'Lỗi tìm kiếm sản phẩm' });
+        }
     }
 };
 

@@ -17,7 +17,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const cartRoutes = require('./routes/cartRoutes'); 
 
 const PORT = process.env.PORT || 5000; // dung de nhan cac http request tu  frontend
-connectDB();
+connectDB.testConnection();
 
 const app = express();
 

@@ -71,6 +71,73 @@ const productModel = {
             console.error('Loi xoa mon an:', error);
             throw error;
         }
+    },
+
+    //tim kiem mon an 
+    search: async (searchParams) => {
+               try {
+            const { keyword, category_id, min_price, max_price, sort } = searchParams;
+            
+            let query = `
+                SELECT p.*, c.name as category_name 
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                WHERE 1=1
+            `;
+            
+            const params = [];
+            
+            // Thêm điều kiện tìm kiếm theo từ khóa
+            if (keyword) {
+                query += ` AND (p.name LIKE ? OR p.description LIKE ?)`;
+                params.push(`%${keyword}%`, `%${keyword}%`);
+            }
+            
+            // Thêm điều kiện tìm kiếm theo danh mục
+            if (category_id) {
+                query += ` AND p.category_id = ?`;
+                params.push(category_id);
+            }
+            
+            // Thêm điều kiện tìm kiếm theo giá
+            if (min_price) {
+                query += ` AND p.price >= ?`;
+                params.push(min_price);
+            }
+            
+            if (max_price) {
+                query += ` AND p.price <= ?`;
+                params.push(max_price);
+            }
+            
+            // Thêm sắp xếp
+            if (sort) {
+                switch (sort) {
+                    case 'price_asc':
+                        query += ` ORDER BY p.price ASC`;
+                        break;
+                    case 'price_desc':
+                        query += ` ORDER BY p.price DESC`;
+                        break;
+                    case 'name_asc':
+                        query += ` ORDER BY p.name ASC`;
+                        break;
+                    case 'name_desc':
+                        query += ` ORDER BY p.name DESC`;
+                        break;
+                    default:
+                        query += ` ORDER BY p.name ASC`;
+                }
+            } else {
+                query += ` ORDER BY p.name ASC`;
+            }
+            
+            const [rows] = await db.pool.query(query, params);
+            return rows;
+        } catch (error) {
+            console.error('Lỗi tìm kiếm sản phẩm:', error);
+            throw error;
+        }
     }
 };
 

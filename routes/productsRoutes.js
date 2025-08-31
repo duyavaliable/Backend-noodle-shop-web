@@ -21,4 +21,7 @@ router.put('/:id', productControllers.updateProduct);
 // Xóa món ăn
 router.delete('/:id', productControllers.deleteProduct);
 
+//tìm kiem san pham 
+router.get('/search', productControllers.searchProducts);
+
 module.exports = router;
