@@ -79,7 +79,7 @@ const productModel = {
             const { keyword, category_id, min_price, max_price, sort } = searchParams;
             
             let query = `
-                SELECT p.*, c.name as category_name 
+                SELECT p.id, p.name, p.price, p.image_url, p.category_id, c.name as category_name
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
                 WHERE 1=1

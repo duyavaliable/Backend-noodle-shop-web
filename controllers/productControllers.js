@@ -102,12 +102,9 @@ const productController = {
     },
 
     searchProducts: async (req, res) => {
+        console.log('Controller searchProducts được gọi với query:', req.query);
         try {
             const { keyword, category_id, min_price, max_price, sort } = req.query;
-            
-            if (!keyword && !category_id && !min_price && !max_price) {
-                return res.status(400).json({ error: 'Vui lòng cung cấp ít nhất một tiêu chí tìm kiếm' });
-            }
             
             const products = await productModel.search({
                 keyword, 
@@ -116,6 +113,8 @@ const productController = {
                 max_price,
                 sort
             });
+
+            console.log('Kết quả trả về cho tìm kiếm:', products);
             
             res.status(200).json(products);
         } catch (error) {

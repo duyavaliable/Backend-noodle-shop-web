@@ -6,6 +6,9 @@ const router = express.Router();
 // Lấy tất cả món ăn
 router.get('/', productControllers.getAllProducts);
 
+//tìm kiem san pham 
+router.get('/search', productControllers.searchProducts);
+
 // Lấy món ăn theo danh mục
 router.get('/category/:category_id', productControllers.getProductsByCategory);
 
@@ -18,10 +21,9 @@ router.post('/', productControllers.createProduct);
 // Cập nhật món ăn
 router.put('/:id', productControllers.updateProduct);
 
+
 // Xóa món ăn
 router.delete('/:id', productControllers.deleteProduct);
 
-//tìm kiem san pham 
-router.get('/search', productControllers.searchProducts);
 
 module.exports = router;
